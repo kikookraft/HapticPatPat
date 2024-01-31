@@ -1,0 +1,1 @@
+powershell -Command " & {pyinstaller.exe -F -n PatPatHaptic -i icon.png --collect-submodules zeroconf --noconsole src/main.py;}"
