@@ -12,3 +12,6 @@ src/__pycache__
 PatPatHaptic.spec
 build/**
 dist/**
+server/build
+server/PatPatHaptic.spec
+server/PatPatHaptic.exe
