@@ -62,4 +62,4 @@ You can compile the server yourself using the `/server/build.bat` file or using 
 pyinstaller -F -n PatPatHaptic -i icon.png --collect-submodules zeroconf --noconsole .\server\main.py
 ```
 ### VRChat & OSC
-Later...
+You can follow the original [Patstrap](https://github.com/danielfvm/Patstrap?tab=readme-ov-file#vrchat) documentation to setup VRChat and OSC.
