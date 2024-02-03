@@ -15,3 +15,5 @@ dist/**
 server/build
 server/PatPatHaptic.spec
 server/PatPatHaptic.exe
+firmware/.gitignore
+firmware/.vscode
