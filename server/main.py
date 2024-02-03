@@ -2,10 +2,15 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLa
 from PyQt6.QtCore import Qt
 from server import Server
 
-import time
 import sys
 
+"""Main window of the application
+This file contains the main window of the application. It is used to create the UI and handle the user interactions.
+There is not much logic in this file, it is mostly used to create the UI and call the server when needed.
+"""
+
 class MainWindow(QWidget):
+    """Main window of the application"""
     def __init__(self):
         super().__init__()
 
@@ -15,6 +20,7 @@ class MainWindow(QWidget):
         self.prev_vrchat_status = False
 
         self.setWindowTitle("PatPatHaptic Server")
+        # Load the global css file if it exists, otherwise create it with the default values
         try: 
             with open("global.css","r") as file:
                 self.setStyleSheet(file.read())
@@ -30,6 +36,7 @@ class MainWindow(QWidget):
         box = QWidget()
         box.setObjectName("mainbackground")
 
+        # Create the sections
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.addWidget(self.create_patstrap_status())
@@ -45,6 +52,7 @@ class MainWindow(QWidget):
         self.setLayout(layoutMain)
 
     def create_patstrap_status(self):
+        """Create the patstrap status section"""
         box = QWidget()
         box.setObjectName("section")
         box.setFixedHeight(85)
@@ -66,6 +74,7 @@ class MainWindow(QWidget):
         return box
 
     def create_vrchat_status(self):
+        """Create the vrchat status section"""
         box = QWidget()
         box.setObjectName("section")
         box.setFixedHeight(85)
@@ -87,6 +96,7 @@ class MainWindow(QWidget):
         return box
 
     def create_settings(self):
+        """Create the settings section"""
         box = QWidget()
         box.setObjectName("section")
         box.setFixedHeight(85)
@@ -110,11 +120,13 @@ class MainWindow(QWidget):
         return box
 
     def get_intensity(self) -> float:
+        """Get the intensity from the slider and return it as a float between 0 and 1"""
         if self.slider_strength is None:
             return 0
         return self.slider_strength.value() / 100.0
 
     def create_test(self):
+        """Create the test section with the two buttons to test the hardware"""
         box = QWidget()
         box.setObjectName("section")
         box.setFixedHeight(140)
@@ -143,27 +155,31 @@ class MainWindow(QWidget):
         return box
 
     def pat_left(self):
-        print("Pat left")
+        """Send a pat to the left side of the patstrap"""
         self.server.strength_left = 2
 
     def pat_right(self):
-        print("Patt right")
+        """Send a pat to the right side of the patstrap"""
         self.server.strength_right = 2
 
     def set_patstrap_status(self, status: bool):
+        """Set the status of the patstrap connection and update the UI accordingly"""
         if self.prev_patstrap_status != status:
             self.prev_patstrap_status = status
             self.status_hardware_connection.setStyleSheet("color: #29b980; font-size: 30px;" if status else "color: #b94029; font-size: 30px;")
 
+            # Enable or disable the test buttons
             self.test_right_button.setDisabled(not status)
             self.test_left_button.setDisabled(not status)
 
     def set_vrchat_status(self, status: bool):
+        """Set the status of the vrchat connection and update the UI accordingly"""
         if self.prev_vrchat_status != status:
             self.prev_vrchat_status = status
             self.status_vrchat_connection.setStyleSheet("color: #29b980; font-size: 30px;" if status else "color: #b94029; font-size: 30px;")
 
     def closeEvent(self, _):
+        """Stop the server when the window is closed"""
         self.server.shutdown()
 if __name__ == "__main__":
     app = QApplication(sys.argv)

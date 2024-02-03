@@ -10,6 +10,7 @@ import time
 import bluetooth
 
 class Server():
+    """Server class to handle the communication between the GUI and the patstrap"""
     def __init__(self, window) -> None:
         # bluetooth
         self.target_name = "ESP32-PatPat"
@@ -18,10 +19,13 @@ class Server():
         # OSC
         self.window = window
         self.running = True
+        self.connected = False
         self.reset()
-        threading.Thread(target=self._connect_osc, args=()).start()
-        threading.Thread(target=self._update_loop, args=()).start()
-        threading.Thread(target=self._connect, args=()).start()
+        
+        # start the different threads
+        threading.Thread(target=self._connect_osc, args=()).start() # handle the OSC communication
+        threading.Thread(target=self._update_loop, args=()).start() # update the patstrap every few miliseconds
+        threading.Thread(target=self._connect, args=()).start() # ensure the bluetooth connection stays alive
         
         
     def shutdown(self) -> None:
@@ -69,6 +73,7 @@ class Server():
         # Send the data to the patstrap
         try:
             self._send("v " + left + " " + right)
+            print("Left > " + left + " Right > " + right, end="\r")
         except:
             self.window.set_patstrap_status(False)
             print("connection lost")
@@ -87,11 +92,13 @@ class Server():
             self.set_pat(self.strength_left * intensity, self.strength_right * intensity)
             time.sleep(.1)
 
+            # Update the status of osc connection
             self.window.set_vrchat_status(time.time() < self.keepAliveTimeout)
         
-        
     def _connect_osc(self):
+        """Connect to the OSC server to send and receive data"""
         def _hit_collider_right(_, value):
+            """Callback function to handle the right pat"""
             currentTime = time.time()
             if currentTime > self.last_time_right:
                 self.strength_right = abs(self.prev_right_value-value)/(currentTime-self.last_time_right)
@@ -99,6 +106,7 @@ class Server():
                 self.last_time_right = currentTime
 
         def _hit_collider_left(_, value):
+            """Callback function to handle the left pat"""
             currentTime = time.time()
             if currentTime > self.last_time_left:
                 self.strength_left = abs(self.prev_left_value-value)/(currentTime-self.last_time_left)
@@ -106,79 +114,106 @@ class Server():
                 self.last_time_left = currentTime
 
         def _recv_packet(_, value):
+            """Callback function to handle the received packets"""
             self.keepAliveTimeout = time.time() + 2
 
+        # register the different callback functions
         dispatcher = Dispatcher()
         dispatcher.map("/avatar/parameters/pat_right", _hit_collider_right)
         dispatcher.map("/avatar/parameters/pat_left", _hit_collider_left)
         dispatcher.map("/avatar/parameters/*", _recv_packet)
 
+        # start the OSC server
         self.osc = BlockingOSCUDPServer(("127.0.0.1", 9002), dispatcher)
         print("OSC serving on {}".format(self.osc.server_address)) # While server is active, receive messages
         self.osc.serve_forever()
 
-
-
     ##############################
-    # Bluetooth
+    # Bluetooth part
     def _connect(self) -> None:
-        print(f"searching for {self.target_name} bluetooth device") 
-        nearby_devices = bluetooth.discover_devices(lookup_names=True, lookup_class=True)
-        for btaddr, btname, btclass in nearby_devices:
-            if self.target_name == btname:
-                self.target_address = btaddr
-                break
-        if self.target_address is not None:
-            print("found target {} bluetooth device with address {} ".format(self.target_name, self.target_address))
-            try:
-                self._connect_socket()
-            except TimeoutError:
-                print("could not connect to target bluetooth device")
-                self.window.set_patstrap_status(False)
-                self._connect()
-        else:
-            print("could not find target bluetooth device nearby")
-            self.window.set_patstrap_status(False)
+        """Connect to the bluetooth device and start the communication loop"""
+        if not self.running:
+            return # Don't connect if the server is shutting down
         
-        #loop to make sure we stay connected
         while self.running:
-            # if we reiceve a k every second we are still connected
-            self.set_pat(0, 0)
-            try:
-                self.socket.send(b'k')
-                connection = True
-                for i in range(0, 5):
-                    recv = self.socket.recv(1)
-                    if recv.rstrip() == b'k' or not self.running:
+            # update the status of the bluetooth connection
+            self.window.set_patstrap_status(self.connected)
+            
+            if not self.connected:
+                # search for the target bluetooth device
+                print(f"searching for {self.target_name} bluetooth device", end="\r") 
+                nearby_devices = bluetooth.discover_devices(lookup_names=True, lookup_class=True)
+                for btaddr, btname, btclass in nearby_devices:
+                    if self.target_name == btname:
+                        self.target_address = btaddr
                         break
-                    self.window.set_patstrap_status(True)
-                if not connection and self.running:
-                    print("connection lost")
-                    self.window.set_patstrap_status(False)
-                    self._connect()
-            except:
-                print("connection lost")
-                self.window.set_patstrap_status(False)
-                self._connect()
+
+                if not self.running: return # Don't connect if the server is shutting down
+
+                # connect to the target bluetooth device
+                if self.target_address is not None:
+                    print("found target {} bluetooth device with address {} ".format(self.target_name, self.target_address), end="\r")
+                    try:
+                        self._connect_socket()
+                        self.connected = True
+                        print("connected to {}".format(self.target_name))
+                    except TimeoutError:
+                        print("could not connect to target bluetooth device    ", end="\r")
+                        self.target_address = None
+                else:
+                    print("could not find target bluetooth device nearby    ", end="\r")
+        
+            #loop to make sure we stay connected
+            # if we reiceve a k every second we are still connected
+            while self.connected and self.running:
+                if not self.running: return # Don't connect if the server is shutting down
+                # update the status of the bluetooth connection
+                self.window.set_patstrap_status(self.connected)
+                # set the patstrap to 0 by default
+                self.set_pat(0, 0) 
                 
+                try:
+                    self.socket.send(b'k')
+                    connection = False
+                    for i in range(0, 3):
+                        recv = self.socket.recv(1)
+                        if recv.rstrip() == b'k':
+                            connection = True
+                            break # only exit the for loop
+                    if not connection:
+                        print("connection lost      ")
+                        self.connected = False
+                        break
+                except:
+                    # if something goes wrong we assume the connection is lost
+                    print("connection lost      ")
+                    self.connected = False
+                    break
+                
+                # wait a second before checking again
+                time.sleep(1)
+            # if we are not connected wait a second before trying again
             time.sleep(1)
             
         
     def _connect_socket(self) -> None:
+        """Connect to the bluetooth device"""
         serverMACAddress = self.target_address
         port = 1
         self.socket = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
         self.socket.connect((serverMACAddress,port))
-        print("connected to {}".format(self.target_name))
+        print("connected to {}".format(self.target_name), end="\r")
         self.window.set_patstrap_status(True)
         
     def _send(self, text) -> None:
+        """Send the data to the bluetooth device"""
         self.socket.send(bytes(text, 'UTF-8'))
             
     def _receive(self) -> str:
+        """Receive the data from the bluetooth device"""
         data = self.socket.recv(1024)
-        print(data.decode("utf-8").rstrip(), end="")
         return data.decode("utf-8").rstrip()
             
     def _close(self):
+        """Close the bluetooth connection"""
         self.socket.close()
