@@ -191,9 +191,9 @@ class Server():
                     break
                 
                 # wait a second before checking again
-                time.sleep(1)
+                if self.connected: time.sleep(1)
             # if we are not connected wait a second before trying again
-            time.sleep(1)
+            if self.running: time.sleep(1)
             
         
     def _connect_socket(self) -> None:
