@@ -40,6 +40,9 @@ Si vous utiliser un ESP différent vous devrez peut-être changer les pins dans 
 Voici le circuit simplifié:  
 ![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/final_circuit.png)
 
+Et voici le circuit final sur un pcb:
+![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/geek_sandwich.JPG)
+
 ## Software
 ### Firmware
 Le code du projet à été dévelopé avec [PlatformIO](https://platformio.org/platformio-ide) et [Visual Studio Code](https://code.visualstudio.com/).

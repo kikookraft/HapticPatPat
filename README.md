@@ -41,6 +41,9 @@ If you use a different ESP32, you may need to change the pins in the code.
 Here is the simplified circuit:  
 ![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/final_circuit.png)
 
+And there is the final circuit on a pcb:
+![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/geek_sandwich.JPG)
+
 ## Software
 ### Firmware
 The code for the ESP32 was developed using [PlatformIO](https://platformio.org/platformio-ide) and [Visual Studio Code](https://code.visualstudio.com/).
