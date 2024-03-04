@@ -1,7 +1,7 @@
-# PatPatHaptic - Haptic Feedback for VRChat with an ESP32 using Bluetooth and OSC
+# Bluetooth PatStrap - Haptic Feedback for VRChat
 This is a project to add haptic feedback to VRChat using an ESP32 and a few other components. It is based on the [Patstrap](https://github.com/danielfvm/Patstrap) project by [danielfvm](https://github.com/danielfvm).
 
-THIS IS STILL IN DEVELOPMENT ! Update will come soon regarding the documentation on how to setup the project.
+Ce fichier README est également disponible en [français](https://github.com/kikookraft/HapticPatPat/blob/main/README_FR.md).
 
 ## What is this project?
 This project (like the Patstrap project) is an open project that allows you to add haptic head pat feedpack for VR players in VRChat.  
@@ -24,16 +24,22 @@ This allows me to keep a very low latency
 - I added a compiled version of the python server so you don't need to install python and all the dependencies to run the server.
 
 ## Hardware parts
-To test this project you will need:
-- An ESP32 (I used a [ESP32 30PIN](https://fr.aliexpress.com/item/1005005970816555.html))
-- A breadboard if you want to test the project before soldering it.
-- 2x 330Ω resistors
-- 2x Transistors (I used 2N2222 )
-- 2x vibrating motors
-- A computer with bluetooth  
-Here is the circuit diagram:  
+To make this project you will need:
+- ESP32, I used a [ESP32 30PIN](https://aliexpress.com/item/1005005970816555.html) but any equivalent with bluetooth support should work.  
+If you use a different ESP32, you may need to change the pins in the code.
+- 2x [330Ω resistors](https://aliexpress.com/item/1005006362959267.html)
+- 2x [Transistors](https://aliexpress.com/item/1005005755402536.html) (I used BC547)
+- 2x [vibrating motors](https://aliexpress.com/item/1005001446097852.html)
+- A [pcb board](https://aliexpress.com/item/1005006365975004.html) (or something to put the circuit on)
+- If using a pcb board, it will be better to have [Dupont sockets](https://amzn.eu/d/i0pZoIV) to connect the ESP32 to the pcb
+- 2x [Diodes](https://aliexpress.com/item/1005006054373731.html) (Only needed if using a battery)
+- [battery](https://www.amazon.com/dp/B0B7N2T1TD?psc=1&ref=ppx_yo2ov_dt_b_product_details) (I used a 3.7V 2000mAh battery)
+- [battery charger](https://aliexpress.com/item/1005006274938832.html) (I used a TP4056)
+- [on/off switch](https://aliexpress.com/item/1005003938856402.html) (Only needed if using a battery)
+- computer with **bluetooth**   
+ 
+Here is the simplified circuit:  
 ![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/circuit.png)
-If you use a different ESP32, you may need to change the pins used in the code.
 
 ## Software
 ### Firmware
@@ -45,6 +51,9 @@ After the editing, you can compile and upload the code to your ESP32 using Platf
 ![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/vsc.png)
 
 When not connected to bluetooth, the ESP32 will blink the onboard LED. When connected, the LED will stay off.
+
+Here is a look at what the final product looks like:
+![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/geek_sandwich.jpg)
 
 ### Server
 [Here](https://github.com/kikookraft/HapticPatPat/releases) you can download the compiled version of the python server.

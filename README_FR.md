@@ -1,7 +1,7 @@
-# PatPatHaptic - Retour haptique pour VRChat en utilisant le Bluetooth sur un ESP32
+# PatsStrap Bluetooth - Retour Haptique pour VRChat
 Ce projet ajoute le retour haptique pour les patpat sur VRChat en utilisant un ESP32 et quelque autres composants. Ce projet est basé sur le projet [Patstrap](https://github.com/danielfvm/Patstrap) par [danielfvm](https://github.com/danielfvm).
 
-CE PROJET EST TOUJOURS EN DEVELOPPEMENT ! Il pourrais encore y avoir quelques bugs et il manques certains détails.
+This README is also available in [English](https://github.com/kikookraft/HapticPatPat/blob/main/README.md).
 
 ## Quel est ce projet?
 Ce projet (tout comme le projet PatStrap) est un projet open source qui permet d'ajouter le eretour Haptique pour les joueurs VR de VRChat.  
@@ -23,16 +23,22 @@ Les problèmes que j'avais eu:
 - J'ai ajouté une version dompilé du serveur pour ne pas avoir besion d'installer python.
 
 ## Composant electroniques
-Pour tester ce projet vous aurez besoin de :
-- un ESP32 (J'ai utilisé un [ESP32 30PIN](https://fr.aliexpress.com/item/1005005970816555.html))
-- Une breadboard si vous voulez tester sans souder les composant
-- 2x resistances de 330Ω 
-- 2x transistors (j'ai utilisé des 2N2222 )
-- 2x moteurs vibrants (comme ceux des téléphone)
-- Un ordinateur avec bluetooth
-Voici le diagrammme du circuit:  
+Pour fabriquer ce projet, vous aurez besoin de:
+- ESP32, j'ai utilisé un version [ESP32 30 Broches](https://aliexpress.com/item/1005005970816555.html) mais n'importe quel équivalent devrait fonctionner.  
+Si vous utiliser un ESP différent vous devrez peut-être changer les pins dans le code.
+- 2x [330Ω résistance](https://aliexpress.com/item/1005006362959267.html)
+- 2x [Transistors](https://aliexpress.com/item/1005005755402536.html) (I used BC547)
+- 2x [moteur vibrateur](https://aliexpress.com/item/1005001446097852.html)
+- A [plaque pcb](https://aliexpress.com/item/1005006365975004.html) (ou tout autre support pour le circuit)
+- Si vous utilisez un pcb, il est cool d'avoir des [sockets Dupont](https://amzn.eu/d/i0pZoIV) pour connecter l'ESP sans le souder directement
+- 2x [Diodes](https://aliexpress.com/item/1005006054373731.html) (uniquement en cas d'utilisation de bateries)
+- [batterie](https://www.amazon.com/dp/B0B7N2T1TD?psc=1&ref=ppx_yo2ov_dt_b_product_details) (J'ai utilisé une 3.7V 2000mAh)
+- [chargeur de batterie](https://aliexpress.com/item/1005006274938832.html) (Pour ma pars : TP4056)
+- [on/off interrupteur](https://aliexpress.com/item/1005003938856402.html) (Uniquement en cas d'utilisation de bateries)
+- Ordinateur avec **bluetooth**   
+ 
+Voici le circuit simplifié:  
 ![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/circuit.png)
-Si vous utiliser un ESP différent, vous aurez sûrement besion de changer les pins.
 
 ## Software
 ### Firmware
@@ -44,6 +50,9 @@ Après l'édition du code, vous pouvez uploader le code sur l'ESP en cliquant su
 ![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/vsc.png)
 
 Quand déconnecté du bluetooth, la led de l'ESP va clignoter. Une fois connecté la led s'eteindra completement.
+
+Voici a quoi ressemble le produit final:
+![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/geek_sandwich.jpg)
 
 ### Serveur
 [Ici](https://github.com/kikookraft/HapticPatPat/releases) vous pourrez télécharger la version compilée du serveur.
