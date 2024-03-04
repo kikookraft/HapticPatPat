@@ -39,7 +39,7 @@ If you use a different ESP32, you may need to change the pins in the code.
 - computer with **bluetooth**   
  
 Here is the simplified circuit:  
-![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/circuit.png)
+![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/final_circuit.png)
 
 ## Software
 ### Firmware

@@ -38,7 +38,7 @@ Si vous utiliser un ESP différent vous devrez peut-être changer les pins dans 
 - Ordinateur avec **bluetooth**   
  
 Voici le circuit simplifié:  
-![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/circuit.png)
+![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/final_circuit.png)
 
 ## Software
 ### Firmware
