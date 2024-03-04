@@ -5,8 +5,8 @@
 
 // Initialization of constants for haptic
 #define INTERNAL_LED 2 // indicates if connected with server (low active)
-#define HAPTIC_LEFT GPIO_NUM_18 // D1
-#define HAPTIC_RIGHT GPIO_NUM_4 // D2
+#define HAPTIC_LEFT GPIO_NUM_5 // D1
+#define HAPTIC_RIGHT GPIO_NUM_4 // D4
 
 // Initialization of variables for haptic
 static unsigned int haptic_left_level = 0;
