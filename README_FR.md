@@ -54,9 +54,6 @@ Après l'édition du code, vous pouvez uploader le code sur l'ESP en cliquant su
 
 Quand déconnecté du bluetooth, la led de l'ESP va clignoter. Une fois connecté la led s'eteindra completement.
 
-Voici a quoi ressemble le produit final:
-![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/geek_sandwich.jpg)
-
 ### Serveur
 [Ici](https://github.com/kikookraft/HapticPatPat/releases) vous pourrez télécharger la version compilée du serveur.
 Vous avez uniquement besoin de le lancer le serveur l'orsque vous utiliser le retour haptique.  
