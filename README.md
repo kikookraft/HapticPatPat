@@ -6,7 +6,7 @@ Ce fichier README est également disponible en [français](https://github.com/ki
 ## What is this project?
 This project (like the Patstrap project) is an open project that allows you to add haptic head pat feedpack for VR players in VRChat.  
 Here is how the project works:
-- Someone head pat you, thaks to contact on your avatar, send a OSC message to the python server.
+- Someone pat you on the head and thanks to contact on your avatar it send a OSC message to the python server.
 - The python server reiceve the OSC message and send a bluetooth message to the ESP32.
 - The ESP32 receive the bluetooth message and activate the motors based on the message (head pat left, right or both).
 
@@ -54,9 +54,6 @@ After the editing, you can compile and upload the code to your ESP32 using Platf
 ![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/vsc.png)
 
 When not connected to bluetooth, the ESP32 will blink the onboard LED. When connected, the LED will stay off.
-
-Here is a look at what the final product looks like:
-![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/geek_sandwich.jpg)
 
 ### Server
 [Here](https://github.com/kikookraft/HapticPatPat/releases) you can download the compiled version of the python server.
