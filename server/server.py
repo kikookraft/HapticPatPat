@@ -124,7 +124,7 @@ class Server():
         dispatcher.map("/avatar/parameters/*", _recv_packet)
 
         # start the OSC server
-        self.osc = BlockingOSCUDPServer(("127.0.0.1", 9002), dispatcher)
+        self.osc = BlockingOSCUDPServer(("127.0.0.1", 9001), dispatcher)
         print("OSC serving on {}".format(self.osc.server_address)) # While server is active, receive messages
         self.osc.serve_forever()
 
