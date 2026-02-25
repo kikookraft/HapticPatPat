@@ -60,8 +60,8 @@ When not connected to bluetooth, the ESP32 will blink the onboard LED. When conn
 You just need to launch it when you want to use the haptic feedback.  
 ![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/UI.png)
 
-If you are using VRCOSC, you can automatically launch the server when you launch VRChat by adding the server to the VRCOSC settings. 
-![](https://raw.githubusercontent.com/kikookraft/HapticPatPat/main/img/vrcosc.png)
+The program automatically search for the VRChat OSC service via OSCQuery, if it doesn't find it, it will use the default port 9001.
+To achieve this, I used the [tinyoscquery](https://github.com/kikookraft/tinyoscquery)
 
 The server is essential to make the project work. It is used to receive the OSC messages from VRChat and send the bluetooth messages to the ESP32.
 The UI is the same as the original project, but the code implemented is different since I had to change the way the server works to use bluetooth instead of wifi.
@@ -70,5 +70,16 @@ You can compile the server yourself using the `/server/build.bat` file or using 
 ``` bash
 pyinstaller -F -n PatPatHaptic -i icon.png --collect-submodules zeroconf --noconsole .\server\main.py
 ```
-### VRChat & OSC
-You can follow the original [Patstrap](https://github.com/danielfvm/Patstrap?tab=readme-ov-file#vrchat) documentation to setup VRChat and OSC.
+### VRChat
+You can follow the original [Patstrap](https://github.com/danielfvm/Patstrap?tab=readme-ov-file#vrchat) documentation to setup VRChat.
+
+### Launching the server
+
+To use the project, you first need to clone the tinyoscquery repository and build it.
+``` bash
+git clone https://github.com/kikookraft/tinyoscquery.git
+cd tinyoscquery
+pip install .
+```
+
+then launch the server using ```python server/main.py``` and you should be good to go.

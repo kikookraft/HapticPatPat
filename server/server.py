@@ -1,10 +1,9 @@
 #connect to the OSC server to send and receive data
-from zeroconf import Zeroconf
 from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
+from tinyoscquery.query import OSCQueryBrowser, OSCQueryClient
 
 import threading
-import struct
 import socket
 import time
 import bluetooth
@@ -20,9 +19,12 @@ class Server():
         self.window = window
         self.running = True
         self.connected = False
+        self.osc_port: int = 9001  # Default port, will be updated by service discovery
+        self.vrchat_service = None
         self.reset()
         
         # start the different threads
+        threading.Thread(target=self._discover_vrchat_service, args=()).start() # discover VRChat OSCQuery service
         threading.Thread(target=self._connect_osc, args=()).start() # handle the OSC communication
         threading.Thread(target=self._update_loop, args=()).start() # update the patstrap every few miliseconds
         threading.Thread(target=self._connect, args=()).start() # ensure the bluetooth connection stays alive
@@ -94,6 +96,39 @@ class Server():
 
             # Update the status of osc connection
             self.window.set_vrchat_status(time.time() < self.keepAliveTimeout)
+    
+    def _discover_vrchat_service(self) -> None:
+        """Continuously discover VRChat OSCQuery service and update port"""
+        browser = OSCQueryBrowser()
+        
+        while self.running:
+            try:
+                vrchat_service = browser.find_service_by_name("VRChat")
+                if vrchat_service:
+                    if self.vrchat_service is None:
+                        print("VRChat OSCQuery service found!")
+                    
+                    self.vrchat_service = vrchat_service
+                    
+                    # Get the OSC port from the service
+                    client = OSCQueryClient(vrchat_service)
+                    host_info = client.get_host_info()
+                    
+                    if host_info and host_info.osc_port is not None and host_info.osc_port != self.osc_port:
+                        old_port = self.osc_port
+                        self.osc_port = host_info.osc_port
+                        print(f"VRChat OSC port updated: {old_port} -> {self.osc_port}")
+                else:
+                    if self.vrchat_service is not None:
+                        print("VRChat OSCQuery service lost")
+                    self.vrchat_service = None
+                    self.osc_port = 9001  # Fallback to default
+                    
+            except Exception as e:
+                print(f"Error discovering VRChat service: {e}")
+            
+            # Check every 5 seconds
+            time.sleep(5)
         
     def _connect_osc(self):
         """Connect to the OSC server to send and receive data"""
@@ -123,8 +158,18 @@ class Server():
         dispatcher.map("/avatar/parameters/pat_left", _hit_collider_left)
         dispatcher.map("/avatar/parameters/*", _recv_packet)
 
-        # start the OSC server
-        self.osc = BlockingOSCUDPServer(("127.0.0.1", 9001), dispatcher)
+        # Wait for initial service discovery
+        print("Waiting for VRChat OSCQuery service discovery...")
+        for _ in range(10):
+            if self.vrchat_service is not None:
+                break
+            time.sleep(0.5)
+        
+        if self.vrchat_service is None:
+            print(f"VRChat service not found, using default port {self.osc_port}")
+        
+        # start the OSC server with discovered or default port
+        self.osc = BlockingOSCUDPServer(("127.0.0.1", self.osc_port), dispatcher)
         print("OSC serving on {}".format(self.osc.server_address)) # While server is active, receive messages
         self.osc.serve_forever()
 
